@@ -3,4 +3,4 @@ Personal home server configs
 
 - OpenVPN
 - Web server
-- Samba
+- Samba file sharing
