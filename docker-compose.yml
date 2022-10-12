@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  ovpn:
+    image: alekslitvinenk/openvpn:latest
+    cap_add:
+      - net_admin
+    network_mode: "bridge"
+    volumes:
+      - ./ovpn:/opt/Dockovpn_data
+    ports:
+      - "53211:1194/udp"
+      - "8080:8080/tcp"
+    restart: unless-stopped
+
+  web:
+    image: halverneus/static-file-server:latest
+    volumes:
+      - ./shared:/web
+    network_mode: "bridge"
+    ports:
+      - "80:8080"
+    restart: unless-stopped
+
+  samba:
+    image: dperson/samba
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    network_mode: "bridge"
+    environment:
+      # advertise shares, default: true, or false (open ports 137, 138)
+      NMBD: "true"
+      USER: "amir;amir1372"
+      USERID: 1000
+      GROUPID: 1000
+      SHARE: "shared;/shares/shared;yes;no;yes;all;none;;dell-server"
+      WORKGROUP: "WORKGROUP"
+      RECYCLE: ""
+    ports:
+      - "137:137/udp" # required to advertise shares (NMBD)
+      - "138:138/udp" # required to advertise shares (NMBD)
+      - "139:139/tcp" # default smb port
+      - "445:445/tcp" # default smb port
+    read_only: false
+    volumes:
+      - ./shared:/shares/shared
+    hostname: amir-dell-pc-smb
+    cap_add:
+      - CAP_NET_ADMIN
