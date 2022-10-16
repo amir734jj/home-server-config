@@ -4,7 +4,7 @@ services:
   noip:
     image: simaofsilva/noip-renewer:latest
     command: "amir734jj ${PASSWORD}"
-    restart: unless-stopped
+    restart: "no"
 
   wireguard:
     image: weejewel/wg-easy:latest
