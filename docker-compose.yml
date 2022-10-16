@@ -9,7 +9,7 @@ services:
       - sys_module
     ports:
       - "53217:51820/udp"
-      - "51821:51821/tcp"
+      - "8081:51821/tcp"
     volumes:
       - ./wg-easy:/etc/wireguard
     restart: unless-stopped
