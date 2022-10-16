@@ -5,3 +5,4 @@ Personal home server configs
 - OpenVPN
 - Web server
 - Samba file sharing
+- NoIP auto renew
