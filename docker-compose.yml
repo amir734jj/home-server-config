@@ -1,6 +1,11 @@
 version: "3.9"
 
 services:
+  noip:
+    image: simaofsilva/noip-renewer:latest
+    command: "amir734jj ${PASSWORD}"
+    restart: unless-stopped
+
   wireguard:
     image: weejewel/wg-easy:latest
     network_mode: "bridge"
