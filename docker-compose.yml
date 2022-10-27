@@ -1,10 +1,22 @@
 version: "3.9"
 
 services:
-  noip:
-    image: simaofsilva/noip-renewer:latest
-    command: "amir734jj ${PASSWORD}"
-    restart: "no"
+  qflood:
+    image: jesec/flood
+    command:
+      - --port 3000
+      - --allowedpath /data
+      - --auth=none
+      - --trurl=http://192.168.0.202:8080/transmission/rpc
+      - --truser=
+      - --trpass=
+    volumes:
+      - ./qflood/config:/config
+      - ./qflood/data:/data
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    network_mode: "bridge"
 
   wireguard:
     image: weejewel/wg-easy:latest
@@ -14,7 +26,7 @@ services:
       - sys_module
     ports:
       - "53217:51820/udp"
-      - "8081:51821/tcp"
+      - "8082:51821/tcp"
     volumes:
       - ./wg-easy:/etc/wireguard
     restart: unless-stopped
@@ -34,7 +46,7 @@ services:
       - ./ovpn:/opt/Dockovpn_data
     ports:
       - "53211:1194/udp"
-      - "8080:8080/tcp"
+      - "8081:8080/tcp"
     restart: unless-stopped
 
   web:
@@ -43,8 +55,21 @@ services:
       - ./shared:/web
     network_mode: "bridge"
     ports:
-      - "80:8080"
+      - "8080:8080"
     restart: unless-stopped
+
+  https-portal:
+    image: steveltn/https-portal:1
+    network_mode: "bridge"
+    environment:
+      STAGE: 'production'
+      DOMAINS: 'hesamian.myddns.me'
+    ports:
+    - '80:80'
+    - '443:443'
+    volumes:
+      - ./shared:/var/www/vhosts/hesamian.myddns.me
+      - /data/ssl_certs:/var/lib/https-portal
 
   samba:
     image: dperson/samba
